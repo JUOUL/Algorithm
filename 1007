@@ -85,3 +85,7 @@ int main()
     delete[] str;
     return 0;
 }
+
+
+mul[i][j]=max(mul[k][j-1]*nums[k+1][i],mul[i][j])；
+知道了j-1个乘号的最大值，对j个时，就不断将乘号从左到右找位置放，留最大值。
