@@ -1,0 +1,77 @@
+1016
+Description
+
+给定一个N(N<=50000)个int型整数的集合以及一个int型整数X, 问集合中是否存在两个元素的和等于X.
+
+Input
+
+第一行输入M表示有M组测试. 每组测试首先输入N和X，接下来输入N个int型整数.
+
+Output
+
+若否存在两个元素的和等于X则输出yes, 否则输出no.
+
+Sample Input
+
+2
+8 7 
+1 5 11 5 4 3 9 6
+8 7 
+1 5 11 5 5 3 9 5
+
+Sample Output
+
+yes
+no
+
+#include <iostream>
+#include<vector>
+#include<algorithm>
+#include <unordered_map>
+using namespace std;
+vector<bool>ans;
+int twoSum(int* nums, int target,int length)
+{
+    unordered_map<int, int> a;
+    for (int i = 0; i < length; i++)
+    {
+        if (a.count(target - nums[i]) > 0)
+        {
+            ans.push_back(1);
+            return 1;
+        }
+        a[nums[i]] = i;
+    }
+    ans.push_back(0);
+    return 0;
+};
+int main()
+{
+    int num ;
+    cin >> num;
+    int length;
+    int value;
+    for (int i = 0; i < num; i++)
+    {
+        cin >> length;
+        cin >> value;
+        int* arr = new int[length];
+        for (int i = 0; i < length; i++)
+        {
+            cin >> arr[i];
+        }
+        twoSum(arr, value, length);
+    }
+    for (int i = 0; i < num; i++)
+    {
+        if (ans[i] == 1)
+        {
+            cout << "yes" << endl;
+        }
+        else
+        {
+            cout << "no" << endl;
+        }
+    }
+    return 0;
+}
