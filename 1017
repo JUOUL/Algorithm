@@ -28,3 +28,54 @@ Sample Output
 10
 10
 
+#include<iostream>
+#include<cstdio>
+#include<cstring>
+#include<algorithm>
+#include<string.h>
+#include<vector>
+using namespace std;
+
+vector<int>ans;
+const int N = 1010;
+int n;
+int q[N];
+int f[N], g[N];
+void daodan()
+{
+	int res = 0;
+	for (int i = 0; i < n; i++) {
+		f[i] = 1;
+		for (int j = 0; j < i; j++)
+			if (q[j] >= q[i])
+				f[i] = max(f[i], f[j] + 1);
+		res = max(res, f[i]);
+	}
+	ans.push_back(res);
+}
+int main() {
+	int t;
+	cin >> t;
+	for (int i = 0; i < t; i++)
+	{
+		n = 0;
+		memset(q, 0, sizeof(q));
+		memset(f, 0, sizeof(f));
+		memset(g, 0, sizeof(g));
+		int num;
+		cin >> num;
+		for (int i = 0; i < num; i++)
+		{
+			int height;
+			cin >> height;
+			q[i] = height;
+			n++;
+		}
+		daodan();
+	}
+	for (int i = 0; i < t; i++)
+	{
+		cout << ans[i] << endl;
+	}
+	return 0;
+}
