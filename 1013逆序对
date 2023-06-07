@@ -92,3 +92,66 @@ int main()
 
 将数组分为两部分，逆序对个数等于两边内部的逆序对个数加上前面比后面的逆序对个数
 使用分治法，分成两部分，统计两边的逆序对个数并将其组合为一个升序数组，再向上。
+第二种写法（写进一个函数）：
+#include <iostream>
+#include<string.h>
+#include<vector>
+
+using namespace std;
+
+void mergeCount(int l, int r, int* a, int* A, vector<int>& anstable, int& ans) {
+    if (l < r) {
+        int mid = (l + r) / 2;
+        mergeCount(l, mid, a, A, anstable, ans);
+        mergeCount(mid + 1, r, a, A, anstable, ans);
+
+        // merge operation
+        int i = l, j = mid + 1, k = l;
+        while (i <= mid && j <= r) {
+            if (a[i] <= a[j]) {
+                A[k++] = a[i++];
+            }
+            else {
+                A[k++] = a[j++];
+                ans += mid - i + 1;
+            }
+        }
+        while (i <= mid)
+        {
+            A[k++] = a[i++];
+        }
+        while (j <= r)
+        {
+            A[k++] = a[j++];
+        }
+        for (int i = l; i <= r; ++i)
+        {
+            a[i] = A[i];
+        }
+
+        anstable.push_back(ans);
+    }
+}
+
+int main()
+{
+    int num = 0;
+    cin >> num;
+    int length;
+    for (int i = 0; i < num; i++)
+    {
+        cin >> length;
+        int* arr = new int[length];
+        int* f = new int[length];
+        memset(f, 0, length);
+        for (int i = 0; i < length; i++)
+        {
+            cin >> arr[i];
+        }
+        vector<int> anstable;
+        int ans = 0;
+        mergeCount(0, length - 1, arr, f, anstable, ans);
+        cout << ans << endl;
+    }
+    return 0;
+}
