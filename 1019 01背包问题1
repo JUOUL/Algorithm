@@ -107,3 +107,10 @@ int main()
     }
     return 0;
 }
+
+这个程序使用了 0/1 背包问题的动态规划解法。以下是其转移方程：
+设 dp[i][j] 表示前 i 个钻石，不超过 j 的重量限制下可以得到的最大价值，其中 0 <= i < n，0 <= j <= c。
+则有：
+dp[0][j] = bag[0].v (if bag[0].s <= j, otherwise 0)
+dp[i][j] = max(dp[i-1][j], bag[i].v + dp[i-1][j-bag[i].s]) (if bag[i].s <= j, otherwise dp[i-1][j])
+其中，bag 是一个包含所有钻石大小和价值的 vector，minWeight 是最小的钻石重量。
