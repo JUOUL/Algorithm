@@ -1,0 +1,91 @@
+1013
+Description
+
+给定一个长度为N的int型数组a[0,1,2,...N-1], 请计算逆序对个数.当i<j且a[i]>a[j], 则称a[i]与a[j]是一对逆序对.
+
+Input
+
+第一行输入M表示包含M组测试数据，每组先输入N (N<=50000), 接着输入N个int型整数.
+
+Output
+
+输出逆序对个数.
+
+Sample Input
+
+2
+5 1 5 2 1 3
+6 85 16 44 99 66 1
+
+Sample Output
+
+4
+9
+
+#include <iostream>
+#include<string.h>
+#include<vector>
+using namespace std;
+int ans = 0;
+vector<int>anstable;
+int merge(int l, int r, int m, int* f, int* mf) 
+{
+    int i = l, j = m + 1, k = l;
+    while (i <= m && j <= r) {
+        if (f[i] <= f[j]) {
+            mf[k++] = f[i++];
+        }
+        else {
+            mf[k++] = f[j++];
+            ans += m - i + 1;
+        }
+    }
+    while (i <= m)
+    {
+        mf[k++] = f[i++];
+    }
+    while (j <= r)
+    {
+        mf[k++] = f[j++];
+    }
+    for (int i = l; i <= r; ++i)
+    {
+        f[i] = mf[i];
+    }
+    return ans;
+}
+
+void mergeCount(int l, int r, int* a, int* A) {
+    if (l < r) {
+        int mid = (l + r) / 2;
+        mergeCount(l, mid, a, A);
+        mergeCount(mid + 1, r, a, A);
+        merge(l, r, mid, a, A);
+    }
+}
+
+int main()
+{
+    int num = 0;
+    cin >> num;
+    int length;
+    for (int i = 0; i < num; i++)
+    {
+        cin >> length;
+        int* arr = new int[length];
+        int* f = new int[length];
+        memset(f, 0, length);
+        for (int i = 0; i < length; i++)
+        {
+            cin >> arr[i];
+        }
+        mergeCount(0,length-1,arr,f);
+        anstable.push_back(ans);
+        ans = 0;
+    }
+    for (int i = 0; i < num; i++)
+    {
+        cout << anstable[i] << endl;
+    }
+    return 0;
+}
