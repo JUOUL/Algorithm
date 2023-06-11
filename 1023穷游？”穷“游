@@ -1,0 +1,140 @@
+Description
+
+贫穷的小A有一个梦想，就是到t国去一次穷游，但现实是残酷的。小A所在的世界一共有n(n<=500)
+个国家，国家与国家之间总共有E(E<=50000)条道路相连，第i个国家对于进入它的外国人都要收取Bi
+的费用，而小A家住在s国，他必须通过这些道路在各个国家之间中转最终到达t国（除非他运气够好
+可以直接从s国到达t国）。但是贫穷的小A只剩下M(M<=100)元家底了，因此他必须精打细算旅途的
+费用，同时小A对于t国实在太向往了，因此他希望能够走最短的路尽快到达t国。这个问题难倒了小
+A，现在他请你帮他算一算他到达t国的最短路径有多长。
+
+Input
+
+第一行输入T(T<=10)表示有T组数据。每组数据第一行输入n、E、s、t、M，分别表示小A所在世界
+的国家数、国家之间的总道路数、小A的国籍、小A向往的国家以及小A的家底；接下来一行输入n个正
+整数Bi，表示第i个国家收取的过路费（由于小A是s国人，因此s国不会收取，但t国会）；接下来输
+入E行每行三个正整数u(1<=u<=n)、v(1<=v<=n)、w，表示u国和v国之间存在着一条长度为w的无
+向边（可能有重边）。输入保证最终结果不会使int溢出。
+
+Output
+
+输出T行正整数，第i行表示第i组数据小A花费不超过M元到达t国的最短路。若小A无法到达t国，输
+出-1.
+
+Sample Input
+
+3
+2 2 1 2 10
+20 10
+1 2 1
+1 2 2
+3 1 1 3 10
+1 1 1
+2 3 1
+3 3 1 3 10
+1 11 1
+1 2 1
+1 2 3
+2 3 1
+
+Sample Output
+
+1
+-1
+-1
+
+
+#include<iostream>
+#include<algorithm>
+#include<string.h>
+#include<vector>
+#include<queue>
+using namespace std;
+struct country {
+	int v, w;
+};
+vector <country> world[505];
+struct vertex {
+	int m, dis, v;
+
+};
+struct mycompare
+{
+	bool operator()(vertex a, vertex b)
+	{
+		return a.dis > b.dis;
+	}
+};
+priority_queue<vertex, vector<vertex>, mycompare>arr;
+
+int main()
+{
+	vector<int>answer;
+	int T, n, E, s, t, M, x, y, z;
+	cin >> T;
+	int cost[505];
+	int distance[505][105];
+	bool flag[505][105];
+	for(int i=0;i<T;i++)
+	{
+		memset(distance, -1, sizeof(distance));
+		memset(flag, true, sizeof(flag));
+		cin >> n >> E >> s >> t >> M;
+		for (int i = 1; i <= n; i++)
+			cin >> cost[i];
+		for (int i = 0; i < E; i++)
+		{
+			cin >> x >> y >> z;
+			country temp;
+			temp.v = y;
+			temp.w = z;
+			world[x].push_back(temp);
+			temp.v = x;
+			world[y].push_back(temp);
+		}
+		vertex temp;
+		temp.m = M; temp.dis = 0; temp.v = s; distance[temp.v][M] = 0;
+		arr.push(temp);
+		while (!arr.empty())
+		{
+			temp = arr.top();
+			arr.pop();
+			int p = temp.v;
+			if (!flag[p][temp.m] || temp.dis > distance[temp.v][temp.m])continue;
+			flag[p][temp.m] = false;
+			for (int i = 0; i < world[p].size(); i++)
+			{
+				int v = world[p][i].v;
+				if (v == s) continue;
+				if (temp.m >= cost[v] && (distance[v][temp.m - cost[v]] == -1 || temp.dis + world[p][i].w < distance[v][temp.m - cost[v]]))
+				{
+					distance[v][temp.m - cost[v]] = temp.dis + world[p][i].w;
+					vertex point;
+					point.dis = temp.dis + world[p][i].w;
+					point.m = temp.m - cost[v];
+					point.v = v;
+					arr.push(point);
+				}
+			}
+		}
+		int ans = 1000000; bool index = 0;
+		for (int i = 0; i <= M; i++)
+			if (distance[t][i] != -1) {
+				ans = min(ans, distance[t][i]);
+				index = 1;
+			}
+		if (!index)
+		{
+			answer.push_back(-1);
+		}
+		else
+			answer.push_back(ans);
+		for (int i = 1; i <= n; i++)
+		{
+			world[i].clear();
+		}
+	}
+	for (int i = 0; i < T; i++)
+	{
+		cout << answer[i] << endl;
+	}
+}
