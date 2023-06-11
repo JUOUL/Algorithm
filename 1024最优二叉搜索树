@@ -1,0 +1,97 @@
+1024
+Description
+
+给定N个整数关键字, 每个关键字有一搜索概率, 关键字外区间(共N+1个区间)也有搜索概率.
+可根据关键字构造二叉搜索树来减少搜索代价. 假定二叉搜索树中关键字节点的搜索代价为该
+节点到树的根的路径上关键字节点的个数, 关键字之外区间的搜索代价也为该区间到树的根的
+路径上关键字节点的个数. 二叉搜索树的期望代价为所有关键字和关键字之外区间的期望代价
+之和. 请构造一棵最优二叉搜索树, 计算最优二叉搜索树的期望代价。
+
+Input
+
+第一行输入M(M<=10)表示有M组数据。每组数据先输入N(N<=500), 表示N个关键字. 接下来
+输入一行N个从小到大排好序的关键字, 一行N个关键字的搜索概率, 以及一行N+1个关键字外
+区间的搜索概率。
+
+Output
+
+输出M行正整数，第i行表示第i组数据的最优二叉搜索树的期望代价, 保留小数点后6位。
+
+Sample Input
+
+2
+2
+10 20
+0.1 0.3
+0.2 0.2 0.2
+3
+10 20 30
+0.1 0.2 0.3
+0.1 0.1 0.1 0.1
+
+Sample Output
+
+1.500000
+1.800000
+
+
+#include<iostream>
+#include<vector>
+#include<string>
+#include<iomanip>
+using namespace std;
+#define INF 0x80000000
+double searchtree(vector<double> pk, vector<double> pe) {
+	int n = pk.size();
+	vector<vector<double>> tcost(n + 1, vector<double>(n + 1, 100000));
+	vector<vector<double>> psum(n + 1, vector<double>(n + 1, 0));
+	for (int i = 1; i <= n; i++) {
+		tcost[i][i - 1] = 0;
+		psum[i][i - 1] = pe[i - 1];
+	}
+	for (int gap = 0; gap < n - 1; gap++) {
+		for (int i = 1; i < n - gap; i++) {
+			int j = i + gap;
+			psum[i][j] = psum[i][j - 1] + pe[j] + pk[j];
+			tcost[i][j] = tcost[i][i - 1] + tcost[i + 1][j] + psum[i][j];
+			for (int k = i; k <= j; k++) {
+				tcost[i][j] = min(psum[i][j] + tcost[i][k - 1] + tcost[k + 1][j], tcost[i][j]);
+			}
+		}
+	}
+	return tcost[1][n - 1];
+}
+int main() {
+	int n;
+	cin >> n;
+	vector<double> ans;
+	for (int i = 0; i < n; i++)
+	{
+		int num;
+		cin >> num;
+
+		vector<double> pk(num + 1);
+		vector<double> pe(num + 1);
+
+		for (int i = 0; i < num; i++) {
+			int temp;
+			cin >> temp;
+		}
+
+		pk[0] = 0;
+		for (int i = 0; i < num; i++) {
+			cin >> pk[i + 1];
+		}
+		for (int i = 0; i < num + 1; i++) {
+			cin >> pe[i];
+		}
+
+		double temp = searchtree(pk, pe);
+		ans.push_back(temp);
+	}
+
+	for (int i = 0; i < n; i++) {
+		cout << fixed << setprecision(6) << ans[i] << endl;
+	}
+
+}
