@@ -1,0 +1,97 @@
+Description
+
+给定直线上2n个点的序列P[1,2,… ,2n]，每个点P[i]要么是白点要么是黑点，其中共有n个白点和n个黑点，
+相邻两个点之间距离均为1，请设计一个算法将每个白点与一黑点相连，使得连线的总长度最小。例如，图中有
+4个白点和4个黑点，以图中方式相连，连线总长度为1+1+1+5=8。 
+
+
+
+Input
+
+第一行输入m表示有m组测试. 每组测试首先输入n(n<=10000)，接下来输入2n个0或者1, 分别表示白色或者
+黑色, 其中0和1的个数分别为n个.
+
+Output
+
+对每组测试数据输出最小总连线长度.
+
+Sample Input
+
+2
+4 
+1 1 0 1 0 0 0 1
+4
+0 0 1 0 1 1 1 0
+
+Sample Output
+
+8
+8
+
+
+#include<iostream>
+#include<vector>
+#include<stack>
+using namespace std;
+struct dot
+{
+	dot(int c, int n)
+	{
+		co = c;
+		num = n;
+	}
+	int co;
+	int num;
+};
+
+int blackandwhite(vector<dot>table,int n)
+{
+	int answer = 0;
+	stack<dot>dots;
+	for (int i = 0; i < n; i++)
+	{
+		if (dots.empty())
+		{
+			dots.push(table[i]);
+		}
+		else
+		{
+			if (table[i].co + dots.top().co == 1)
+			{
+				answer =answer+ table[i].num - dots.top().num;
+				dots.pop();
+			}
+			else
+			{
+				dots.push(table[i]);
+			}
+		}
+	}
+	return answer;
+}
+int main()
+{
+	int t;
+	cin >> t;
+	vector<int>ans;
+	for (int i = 0; i < t; i++)
+	{
+		int n;
+		cin >> n;
+		vector<dot>table;
+		int k = 2 * n;
+		for (int i = 0; i < k; i++)
+		{
+			int num;
+			cin >> num;
+			dot tmp(num, i);
+			table.push_back(tmp);
+		}
+		ans.push_back(blackandwhite(table,k));
+	}
+	for (int i = 0; i < t; i++)
+	{
+		cout << ans[i] << endl;
+	}
+	return 0;
+}
