@@ -1,0 +1,85 @@
+Description
+
+给定一根长度为n(n<=10000)的钢条以及一张价格表, 请计算这根钢条能卖出的最大总收益. 价格表表示为(li,pi), 1<=i<=k. 不在价格表中的钢条可卖出价格为0.
+
+Input
+
+第一行输入m(m<=10)表示有M组数据。每组数据第一行输入两个int型整数n和k，分别表示钢条长度以及价格表中不同价格数量. 接下来一行输入k个价格的表示(li,pi), 均为整数, li可能大于n。
+
+Output
+
+输出m行整数，第i行表示第i组数据的最大总收益。
+
+Sample Input
+
+2
+27 3
+35 41 61 49 73 74
+94 2
+21 55 88 64 
+
+Sample Output
+
+0
+220
+
+#include <iostream>
+#include <vector>
+using namespace std;
+
+class Steel {
+public:
+    int length;
+    int value;
+    Steel(int l, int v) {
+        length = l;
+        value = v;
+    }
+};
+
+int main()
+{
+    vector<int>ans;
+    int m;
+    cin >> m;
+    for (int i = 0; i < m; i++) 
+    {
+        int l = 10000, c = 100;
+        cin >> l >> c;
+        int* dp = new int[l + 1];
+        vector<Steel> steel;
+        int length, value, minLength = 2147483647;
+        for (int i = 0; i < c; ++i) {
+            cin >> length >> value;
+            if (length <= l) {
+
+                steel.push_back(Steel(length, value));
+                minLength = min(minLength, length);
+            }
+        }
+        if (steel.empty()) {
+            ans.push_back(0);
+            continue;
+        }
+        for (int i = 0; i < minLength; ++i) {
+            dp[i] = 0;
+        }
+        for (int li = minLength; li < l + 1; ++li) {
+            int tempValue = 0;
+            for (int i = 0; i < steel.size(); ++i) {
+                if (steel[i].length <= li) {
+                    tempValue = max(tempValue, steel[i].value + dp[li - steel[i].length]);
+                }
+            }
+            dp[li] = tempValue;
+        }
+
+        ans.push_back(dp[l]);
+        delete[] dp;
+    }
+    for (int i = 0; i < m; i++)
+    {
+        cout << ans[i] << endl;
+    }
+    return 0;
+}
