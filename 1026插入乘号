@@ -1,0 +1,106 @@
+Description
+
+给出N个1-9的数字 (v1,v2,…,vN), 不改变它们的相对位置, 在中间加入K个乘号和N-K-1个加号, 括号随便加, 
+使最终结果最大。因为乘号和加号一共就是N-1个，所以恰好每两个相邻数字之间都有一个符号。
+例如： N=5, K=2，5个数字分别为1、2、3、4、5，可以进行如下运算： 
+1*2*(3+4+5)=24 
+1*(2+3)*(4+5)=45 
+(1*2+3)*(4+5)=45
+等等.
+
+Input
+
+第一行输入M(M<=10)表示有M组数据。每组数据输入两整数N和K(N<=20, K<20), 接下来输入N个1-9的数字。
+
+Output
+
+输出M行正整数，第i行表示第i组数据的最大结果, 你可能需要用long long类型存储结果。
+
+Sample Input
+
+2
+5 2
+1 2 3 4 5 
+6 3
+1 2 3 4 5 6
+
+Sample Output
+
+120
+720
+
+
+#include<iostream>
+#include<vector>
+#include<algorithm>
+#include<string.h>
+using namespace std;
+long long MuxNum(int n, int k, long long* arr)
+{
+    long long** dp = new long long*[n];
+    long long** data = new long long*[n];
+    long long sum = 0;
+    for (int i = 0; i < n; i++)
+    {
+        sum += arr[i];
+        data[i] = new long long[n];
+        dp[i] = new long long[k+1];
+        data[0][i] = sum;
+    }
+    long long total = sum;
+    //memset(dp, 0, sizeof(dp));
+    for (int i = 0; i < n; i++)
+    {
+        for (int j = 0; j < k+1; j++)
+        {
+            dp[i][j] = 0;
+        }
+    }
+    for (int i = 1; i < n; i++)
+    {
+        for (int j = i; j < n; j++)
+        {
+            data[i][j] = data[i - 1][j] - arr[i-1];
+        }
+    }
+    for (int i = 0; i < n; i++)
+    {
+        dp[i][0] = data[0][i];
+    }
+    for (int i = 0; i < n; i++)
+    {
+        for (int j = 1; j < i+1; j++)
+        {
+            for (int k = 0; k <= i-1; k++)
+            {
+                dp[i][j] = max(dp[i][j], dp[k][j - 1] * data[k + 1][i]);
+            }
+        }
+    }
+    return dp[n-1][k];
+}
+int main()
+{
+    vector<long long>ans;
+    int num = 0;
+    cin >> num;
+    int len;
+    int mul;
+    for (int i = 0; i < num; i++)
+    {
+        cin >> len;
+        cin >> mul;
+        long long* arr = new long long[len];
+        for (int i = 0; i < len; i++)
+        {
+            cin >> arr[i];
+        }
+        ans.push_back(MuxNum(len, mul, arr));
+    }
+    for (int i = 0; i < num; i++)
+    {
+        cout << ans[i]<<endl;
+    }
+    return 0;
+}
+
