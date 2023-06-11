@@ -1,0 +1,70 @@
+Description
+
+给定两个字符串A和B, 请计算这两人个字符串的最长公共子序列长度。
+
+Input
+
+第一行输入M(M<=10)表示有M组数据。每组数据输入两行字符串, 字符串的长度不长于500。
+
+Output
+
+输出M行正整数，第i行表示第i组数据的最长公共子序列长度。
+
+Sample Input
+
+2
+abcdefg
+cemg
+abcdefgh
+ceaaegh
+
+Sample Output
+
+3
+4
+
+#include<iostream>
+#include<string>
+#include<string.h>
+#include<vector>
+using namespace std;
+int findLCS(string A, int n, string B, int m)
+{
+    vector<int> sub(m, 1);
+    vector<vector<int>> res(n, sub);
+    int i, j, temp, temp2;
+    for (i = 0; i < n; i++) {
+        if (A[i] != B[0]) res[i][0] = 0;
+        else break;
+    }
+    for (i = 0; i < m; i++) {
+        if (A[0] != B[i]) res[0][i] = 0; 
+        else break;
+    }
+    for (i = 1; i < n; i++) {
+        for (j = 1; j < m; j++) {
+            temp2 = 0;
+            if (A[i] == B[j]) temp2 = res[i - 1][j - 1] + 1;
+            temp = max(res[i - 1][j], res[i][j - 1]);
+            res[i][j] = max(temp2, temp);
+        }
+    }
+    return res[n - 1][m - 1];
+}
+int main()
+{
+    vector<int>ans;
+    int N;
+    cin >> N;
+    for (int i = 0; i < N; i++)
+    {
+        string a; string b;
+        cin >> a >> b;
+        int lengthA = a.size(), lengthB = b.size();
+        ans.push_back(findLCS(a, lengthA, b, lengthB));
+    }
+    for (int i = 0; i < N; i++)
+    {
+        cout << ans[i] << endl;
+    }
+}
