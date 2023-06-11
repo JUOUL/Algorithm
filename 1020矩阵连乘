@@ -1,0 +1,69 @@
+Description
+
+两个矩阵A(r行s列)和B(s行t列)相乘, 乘法代价为r*s*t. 现给定N(N<=500)个矩阵连乘问题, 请计算最小乘法代价。
+
+Input
+
+第一行输入M(M<=10)表示有M组数据。每组数据第一行输入N，表示矩阵个数；接下来一行输入N个矩阵的行数和列数。
+
+Output
+
+输出M行正整数，第i行表示第i组数据的最小乘法代价。
+
+Sample Input
+
+2
+3
+1 2 2 3 3 4
+3
+4 3 3 2 2 1 
+
+Sample Output
+
+18
+18
+
+#include <iostream>
+#include<vector>
+using namespace std;
+struct Matrix {
+    int r;
+    int c;
+};
+int main(int argc, const char* argv[]) {
+    vector<int>ans;
+    int m;
+    cin >> m;
+    for(int i=0;i<m;i++) {
+        int n;
+        cin >> n;
+        Matrix* ms = new Matrix[n];
+        int** dp = new int* [n];
+        for (int i = 0; i < n; ++i) {
+            ms[i] = Matrix();
+            cin >> ms[i].r >> ms[i].c;
+            dp[i] = new int[n];
+            dp[i][i] = 0;   
+        }
+        for (int bias = 1; bias < n; ++bias) {
+            for (int k = 0; k < n - bias; ++k) {
+                dp[k][k + bias] = 2147483647;  
+                for (int ki = k; ki < k + bias; ++ki) {
+                    dp[k][k + bias] = min(dp[k][k + bias],
+                        dp[k][ki] + dp[ki + 1][k + bias] + ms[k].r * ms[ki].c * ms[k + bias].c);
+                }
+            }
+        }
+
+        ans.push_back(dp[0][n - 1]);
+        for (int i = 0; i < n; ++i) {
+            delete[] dp[i];
+        }
+        delete[] dp;
+    }
+    for (int i = 0; i < m; i++)
+    {
+        cout << ans[i] << endl;
+    }
+    return 0;
+}
