@@ -59,18 +59,18 @@ int MaxValue(int n, int c, vector<diamond>bag)
     }
     for (int i = 1; i < n; ++i) {
         for (int j = 1; j < c + 1; ++j) {
-            if (bag[i].s < j) {
-                if (dp[i - 1][j - bag[i].s] == 0) {
+            if (bag[i].s < j) {                              //第一种情况：当前钻石小于背包容量
+                if (dp[i - 1][j - bag[i].s] == 0) {           //装上第i个钻石装不满的话      dp[i][j]==dp[i-1][j]
                     dp[i][j] = dp[i - 1][j];
                 }
-                else {
-                    dp[i][j] = max(bag[i].v + dp[i - 1][j - bag[i].s], dp[i - 1][j]);
+                else {                                     //装上第i个钻石能装满
+                    dp[i][j] = max(bag[i].v + dp[i - 1][j - bag[i].s], dp[i - 1][j]);      //取两者大的
                 }
             }
-            else if (bag[i].s == j) {
-                dp[i][j] = max(bag[i].v, dp[i - 1][j]);
+            else if (bag[i].s == j) {              //第二种情况：当前钻石等于背包容量
+                dp[i][j] = max(bag[i].v, dp[i - 1][j]);          //取两者大的
             }
-            else {
+            else {                      //第三种情况：当前钻石大于背包容量
                 dp[i][j] = dp[i - 1][j];
             }
         }
